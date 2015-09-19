@@ -38,6 +38,13 @@ class Gs1_128
     private $binaryCodeOffsets = [];
 
 
+    public function __construct()
+    {
+        $this->slicer = new Utils\SectionSlicer();
+        $this->subsetsMaps = new Subsets();
+        $this->binaryMap = new BinaryMap();
+    }
+
     public function generate($barcodeString)
     {
         $this->binaryCodeOffsets = [];
@@ -55,13 +62,6 @@ class Gs1_128
 
         $map = $this->binaryMap;
         return join('', array_map(function($n) use ($map) {return $map->get($n);}, $this->binaryCodeOffsets));
-    }
-
-    public function __construct()
-    {
-        $this->slicer = new Utils\SectionSlicer();
-        $this->subsetsMaps = new Subsets();
-        $this->binaryMap = new BinaryMap();
     }
 
     /**

@@ -20,6 +20,8 @@ class Gs1_128
 
     private $binaryCodeOffsets = [];
 
+    private $barcodeString;
+
     public function __construct()
     {
         $this->slicer = new SectionSlicer();
@@ -35,7 +37,7 @@ class Gs1_128
     {
         if (array_search((string) $pair, $this->getCodeMap(), true))
         {
-            return; //current will match
+            return;
         }
 
         //if barcode contains small letters try to use B up front
@@ -81,7 +83,7 @@ class Gs1_128
             $total += $value * $multiplier;
         }
 
-        return $total % 103;
+        return array_keys($this->binaryCodesMap)[$total % 103];
     }
 
     private function doShit($array)
@@ -117,35 +119,19 @@ class Gs1_128
         }
 
 
-        $code_keys = array_keys($this->binaryCodesMap);
 
-        $this->binaryCodeOffsets[] = $code_keys[$this->generateChecksum($this->binaryCodeOffsets)];
+
+        $this->binaryCodeOffsets[] = $this->generateChecksum($this->binaryCodeOffsets);
         $this->binaryCodeOffsets[] = 'STOP';
         $this->binaryCodeOffsets[] = 'TERMINATE';
 
-        $xxxxx = [];
-        foreach ($this->binaryCodeOffsets as $zupa)
-        {
-            $xxxxx[] = $this->binaryCodesMap[$zupa];
-        }
-
-        return join('', $xxxxx);
-    }
-
-
-
-    private function getBinary($offset) //fixme: delete
-    {
-        //check if exists
-        $code128c_codes = $this->binaryCodesMap;
-        return $code128c_codes[$offset];
-
-
+        $map = $this->binaryCodesMap;
+        return join('', array_map(function($n) use ($map) {return $map[$n];}, $this->binaryCodeOffsets));
     }
 
     private function getPairs($code)
     {
-        return str_split($code, 2); //test
+        return str_split($code, 2);
     }
 
 
@@ -300,9 +286,7 @@ class Gs1_128
         "START" => "11010011100",
         "FNC1" => "11110101110",
         "STOP" => "11000111010",
-        "TERMINATE" => "11",
-//        "START_DATA" => "105",
-//        "FNC1_DATA" => "102" //wtf
+        "TERMINATE" => "11"
     ];
 
     private function getCodeMap()

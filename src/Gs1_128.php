@@ -1,58 +1,109 @@
 <?php
 namespace Ayeo\Barcode;
 
-// Class using only Code C to encode data
+// Class using only Subset C to encode data - no jak chuj
 // https://pl.wikipedia.org/wiki/Kod_128
 // gs1-128 requires additional FNC1 chars (the only difference)
+// http://www.logisticlabel.com/pl/1/o_gs1.html
+use Ayeo\Barcode\Model\Section;
+
 class Gs1_128
 {
+    /**
+     * @var SectionSlicer
+     */
+    private $slicer;
 
-    public function build($barcodeString)
+    private $mapInUse = 'C';
+
+    public function __construct()
     {
+        $this->slicer = new SectionSlicer();
+    }
+    //temporary dev method
+    public function generate($barcodeString)
+    {
+        $checkSum = [];
+        $sections = $this->slicer->getSections($barcodeString);
+
+
         $barcode = [];
-        $barcode[] = $this->getBinary("START");
+        $barcode[] = $this->getBinary("START"); //fixme: use single quote
         $barcode[] = $this->getBinary("FNC1");
 
-        foreach ($this->getPairs($barcodeString) as $pair)
+        $checkSum[] = 105; //START C
+        $checkSum[] = 102; //FCN1
+
+
+        $i = 2;
+        /* @var $section Section */
+        foreach ($sections as $section)
         {
-            $barcode[] = $this->getBinary($pair);
+            foreach ($this->getPairs((string) $section) as $pair)
+            {
+                if ($pair == 5)
+                {
+                    $barcode[] = "11101011110";
+                    $checkSum[] = 101 * $i;
+                    $i++;
+                    $this->mapInUse = 'A';
+                }
+
+                $barcode[] = $this->getBinary($pair);
+
+                $map = $this->getCodeMap();
+                if ($this->mapInUse == 'A')
+                {
+                    $xxx = array_search($pair, $map);
+                }
+                else
+                {
+                    $xxx = $pair;
+                }
+
+                $checkSum[] = $xxx * $i;
+                $i++;
+
+            }
         }
 
-        $barcode[] = $this->getPosition($this->calculateChecksum($barcodeString));
+
+        //fixme
+        $xx = '';
+        foreach ($sections as $section)
+        {
+            $xx .= (string) $section;
+        }
+
+        $key = array_sum($checkSum) % 103;
+        $code_keys = array_keys($this->mapC);
+        $xxx =  $this->mapC[$code_keys[$key]];
+
+        $barcode[] = $xxx;
+        $this->mapInUse = 'C';
         $barcode[] = $this->getBinary("STOP");
         $barcode[] = $this->getBinary("TERMINATE");
 
         return join('', $barcode);
     }
 
-    private function calculateChecksum($barcode)
-    {
-        $i = 1;
-        $data = [];
 
-        $data[] = $this->getInteger("START_DATA");
-
-        foreach ($this->getPairs($barcode) as $pair)
-        {
-            $data[] = $pair * ++$i;
-        }
-
-        $data[] = $this->getInteger("FNC1_DATA");
-
-        return array_sum($data) % 103;
-    }
-
-    private function getInteger($offset)
-    {
-        $code128c_codes = $this->getCodeMap();
-        return intval($code128c_codes[$offset]);
-    }
 
     private function getBinary($offset)
     {
         //check if exists
         $code128c_codes = $this->getCodeMap();
-        return $code128c_codes[$offset];
+
+        if ($this->mapInUse === 'A')
+        {
+            $key = array_search($offset, $code128c_codes);
+            return $this->mapC[$key];
+        }
+        else
+        {
+            return $code128c_codes[$offset];
+        }
+
 
     }
 
@@ -62,16 +113,32 @@ class Gs1_128
     }
 
 
-    private function getPosition($key)
-    {
-        $code128c_codes = $this->getCodeMap();
-        $code_keys = array_keys($code128c_codes);
-        return $code128c_codes[$code_keys[$key]];
-    }
 
-    private function getCodeMap()
-    {
-        return array(
+
+    private $mapA = array(
+        ' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', // 9 (end)
+        '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', // 19
+        '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', // 29
+        '>', '?', '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', // 39
+        'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', // 49
+        'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', // 59
+        '\\', ']', '^', '_', // 63 (We're going into the weird bytes next)
+
+        // Hex is a little more concise in this context
+        "\x00", "\x01", "\x02", "\x03", "\x04", "\x05", // 69
+        "\x06", "\x07", "\x08", "\x09", "\x0A", "\x0B", // 75
+        "\x0C", "\x0D", "\x0E", "\x0F", "\x10", "\x11", // 81
+        "\x12", "\x13", "\x14", "\x15", "\x16", "\x17", // 87
+        "\x18", "\x19", "\x1A", "\x1B", "\x1C", "\x1D", // 93
+        "\x1E", "\x1F", // 95
+
+        // Now for system codes
+        'FNC_3', 'FNC_2', 'SHIFT_B', 'CODE_C', 'CODE_B', // 100
+        'FNC_4', 'FNC_1', 'START_A', 'START_B', 'START_C', // 105
+        'STOP',	// 106
+    );
+
+    private $mapC =  [
             "00" => "11011001100",
             "01" => "11001101100",
             "02" => "11001100110",
@@ -183,7 +250,19 @@ class Gs1_128
             "STOP" => "11000111010",
             "TERMINATE" => "11",
             "START_DATA" => "105",
-            "FNC1_DATA" => "102"
-        );
+            "FNC1_DATA" => "102" //wtf
+    ];
+
+    private function getCodeMap()
+    {
+        if ($this->mapInUse === 'C')
+        {
+            return $this->mapC;
+        }
+
+        if ($this->mapInUse === 'A')
+        {
+            return $this->mapA;
+        }
     }
 }

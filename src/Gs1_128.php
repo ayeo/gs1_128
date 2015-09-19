@@ -14,42 +14,71 @@ class Gs1_128
      */
     private $slicer;
 
-    private $mapInUse = 'C';
+    private $mapInUse = 'X';
+
+    private $mapX = [
+        "00" => "00",
+        "01" => "01",
+        "02" => "02",
+        "03" => "03",
+        "04" => "04",
+        "05" => "05",
+        "06" => "06",
+        "07" => "07",
+        "08" => "08",
+        "09" => "09",
+        "10" => "10",
+        "11" => "11",
+        "12" => "12",
+        "34" => "34"
+    ];
+
+    private $turbo = [];
 
     public function __construct()
     {
         $this->slicer = new SectionSlicer();
     }
+
+    private function duKupa($pair)
+    {
+        if (array_search((string) $pair, $this->getCodeMap(), true) === false)
+        {
+            $this->mapInUse = 'A';
+            $this->checkSum[] = 101 * 5;
+            $this->turbo[] = 101;
+            $this->i++;
+        }
+    }
+
+    private function getOffset($pair)
+    {
+        return array_search($pair, $this->getCodeMap());
+    }
+
     //temporary dev method
     public function generate($barcodeString)
     {
-        $checkSum = [];
         $sections = $this->slicer->getSections($barcodeString);
+        $this->checkSum = [];
+        $this->turbo = [];
+
+        $this->checkSum[] = 105; //START C
+        $this->checkSum[] = 102; //FCN1
+
+        $this->turbo[] = 105;
+        $this->turbo[] = 102;
 
 
-        $barcode = [];
-        $barcode[] = $this->getBinary("START"); //fixme: use single quote
-        $barcode[] = $this->getBinary("FNC1");
-
-        $checkSum[] = 105; //START C
-        $checkSum[] = 102; //FCN1
-
-
-        $i = 2;
+        $this->i = 2;
         /* @var $section Section */
         foreach ($sections as $section)
         {
             foreach ($this->getPairs((string) $section) as $pair)
             {
-                if ($pair == 5)
-                {
-                    $barcode[] = "11101011110";
-                    $checkSum[] = 101 * $i;
-                    $i++;
-                    $this->mapInUse = 'A';
-                }
-
-                $barcode[] = $this->getBinary($pair);
+                $this->duKupa($pair);
+                $offset = $this->getOffset($pair);
+                $this->barcode[] = $this->getBinary($offset);
 
                 $map = $this->getCodeMap();
                 if ($this->mapInUse == 'A')
@@ -61,30 +90,28 @@ class Gs1_128
                     $xxx = $pair;
                 }
 
-                $checkSum[] = $xxx * $i;
-                $i++;
+                $this->turbo[] = $xxx;
+                $this->checkSum[] = $xxx * $this->i;
+                $this->i++;
 
             }
         }
 
 
-        //fixme
-        $xx = '';
-        foreach ($sections as $section)
+        $key = array_sum($this->checkSum) % 103;
+        $code_keys = array_keys($this->mapC);
+
+        $this->turbo[] = $code_keys[$key];
+        $this->turbo[] = 'STOP';
+        $this->turbo[] = 'TERMINATE';
+
+        $xxxxx = [];
+        foreach ($this->turbo as $zupa)
         {
-            $xx .= (string) $section;
+            $xxxxx[] = $this->mapC[$zupa];
         }
 
-        $key = array_sum($checkSum) % 103;
-        $code_keys = array_keys($this->mapC);
-        $xxx =  $this->mapC[$code_keys[$key]];
-
-        $barcode[] = $xxx;
-        $this->mapInUse = 'C';
-        $barcode[] = $this->getBinary("STOP");
-        $barcode[] = $this->getBinary("TERMINATE");
-
-        return join('', $barcode);
+        return join('', $xxxxx);
     }
 
 
@@ -92,17 +119,8 @@ class Gs1_128
     private function getBinary($offset)
     {
         //check if exists
-        $code128c_codes = $this->getCodeMap();
-
-        if ($this->mapInUse === 'A')
-        {
-            $key = array_search($offset, $code128c_codes);
-            return $this->mapC[$key];
-        }
-        else
-        {
-            return $code128c_codes[$offset];
-        }
+        $code128c_codes = $this->mapC;
+        return $code128c_codes[$offset];
 
 
     }
@@ -263,6 +281,11 @@ class Gs1_128
         if ($this->mapInUse === 'A')
         {
             return $this->mapA;
+        }
+
+        if ($this->mapInUse === 'X')
+        {
+            return $this->mapX;
         }
     }
 }

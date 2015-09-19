@@ -21,7 +21,7 @@ class SectionSlicer
     {
         $this->klops = [];
 
-        $pattern = '#\((\d+)\)(.+)#';
+        $pattern = '#\((\d+)\)((?:[^\(])+)#';
         preg_match_all($pattern, $data, $matches);
 
         $zupa = [];

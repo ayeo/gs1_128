@@ -10,36 +10,6 @@ class Gs1_128Test extends \PHPUnit_Framework_TestCase
         return new Gs1_128();
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
-    public function testBarcodeGenerating($value, $binary)
-    {
-        //$this->assertEquals($binary, $this->getBuilder()->build($value));
-    }
-
-    //compared with http://example.barcodephp.com/html/BCGgs1128.php
-    public function dataProvider()
-    {
-        return [
-            [
-                '1234',
-                '11010011100111101011101011001110010001011000111010011001100011101011'
-            ],
-            [
-                '10',
-                '110100111001111010111011001000100110111001001100011101011'
-            ],
-            [
-                '1500100900',
-                '11010011100111101011101011100110011011001100110010001001100100100011011001100100110111001100011101011'
-            ],
-            [
-                '12111111', //(12)111111
-                '110100111001111010111010110011100110001001001100010010011000100100111010110001100011101011'
-            ]
-        ];
-    }
 
     /**
      * @dataProvider realDataProvider

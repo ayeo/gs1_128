@@ -127,6 +127,14 @@ class Gs1_128
     }
 
 
+    /**
+     * @return array
+     */
+    private function getCodeMap()
+    {
+        return $this->{'map'.$this->mapInUse};
+    }
+
     private $mapB = [
         ' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', // 9 (end)
         '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', // 19
@@ -280,22 +288,4 @@ class Gs1_128
         "STOP" => "11000111010",
         "TERMINATE" => "11"
     ];
-
-    private function getCodeMap()
-    {
-        if ($this->mapInUse === 'A')
-        {
-            return $this->mapA;
-        }
-
-        if ($this->mapInUse === 'B')
-        {
-            return $this->mapB;
-        }
-
-        if ($this->mapInUse === 'C')
-        {
-            return $this->mapC;
-        }
-    }
 }

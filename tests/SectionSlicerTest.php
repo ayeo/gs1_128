@@ -2,7 +2,7 @@
 namespace Ayeo\Barcode\Test;
 
 use Ayeo\Barcode\Model\Section;
-use Ayeo\Barcode\SectionSlicer;
+use Ayeo\Barcode\Utils\SectionSlicer;
 
 class SectionSlicerTest extends \PHPUnit_Framework_TestCase
 {

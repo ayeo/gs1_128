@@ -7,8 +7,7 @@ class SectionBuilder
 {
     public function build($identifier, $value)
     {
-        if (array_key_exists($identifier, $this->data) === false)
-        {
+        if (array_key_exists($identifier, $this->data) === false) {
             throw new \LogicException(sprintf('Unknown application identifier %s', $identifier));
         }
 
@@ -16,22 +15,17 @@ class SectionBuilder
 
         $sectionData = $this->data[$identifier];
 
-        if (strlen($value) < $sectionData[0])
-        {
+        if (strlen($value) < $sectionData[0]) {
             throw new \LogicException($sectionData[2]);
         }
 
-        if (strlen($value) > $sectionData[1])
-        {
+        if (strlen($value) > $sectionData[1]) {
             throw new \LogicException($sectionData[2]);
         }
 
-        if ($sectionData[0] === $sectionData[1])
-        {
+        if ($sectionData[0] === $sectionData[1]) {
             $fixedLength = true;
-        }
-        else
-        {
+        } else {
             $fixedLength = false;
         }
 
@@ -43,10 +37,7 @@ class SectionBuilder
         '01' => [14, 14, 'GLOBAL TRADE ITEM NUMBER (01) - must contains excat 14 digits'],
         '02' => [14, 14, 'ITEM TRADE ITEM NUMBER (02) - must contains excat 14 digits'],
         '10' => [1, 20, 'BATCH NUMBER (10) - must contains between 1-20 digits'],
-        '010' => [1, 20, 'BATCH NUMBER (10) - must contains between 1-20 digits'],
-
         '12' => [6, 6, 'PAYMENT DATE (12) - must be in YYMMDD format'],
-
         '400' => [1, 30, 'CUSTOMER PURCHASE ORDER NUMBER (400) - must contains between 1-30 digits'],
     ];
 }

@@ -1,5 +1,7 @@
 <?php
-namespace Ayeo\Barcode;
+namespace Ayeo\Barcode\Utils;
+
+use Ayeo\Barcode\SectionBuilder;
 
 class SectionSlicer
 {
@@ -19,15 +21,13 @@ class SectionSlicer
         preg_match_all($pattern, $data, $matches);
 
         $zupa = [];
-        for ($x = 0; $x < count($matches[0]); $x++)
-        {
+        for ($x = 0; $x < count($matches[0]); $x++) {
             $zupa[] = $matches[1][$x];
             $zupa[] = $matches[2][$x];
         }
 
         $expected = [];
-        foreach (array_chunk($zupa, 2) as $sectionData)
-        {
+        foreach (array_chunk($zupa, 2) as $sectionData) {
             $expected[] = $this->sectionBuilder->build($sectionData[0], $sectionData[1]);
         }
 

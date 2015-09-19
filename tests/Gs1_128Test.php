@@ -5,11 +5,13 @@ use Ayeo\Barcode\Gs1_128;
 
 class Gs1_128Test extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @return Gs1_128
+     */
     private function getBuilder()
     {
         return new Gs1_128();
     }
-
 
     /**
      * @dataProvider realDataProvider

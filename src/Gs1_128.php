@@ -22,6 +22,35 @@ class Gs1_128
 
     private $barcodeString;
 
+    private $turbo = [
+        'A' => 101,
+        'B' => 100,
+        'C' =>  99,
+    ];
+
+
+    public function generate($barcodeString)
+    {
+        $this->barcodeString = $barcodeString;
+        $sections = $this->slicer->getSections($barcodeString);
+        $this->binaryCodeOffsets = [];
+        $this->binaryCodeOffsets[] = 105; //start
+        $this->binaryCodeOffsets[] = 102; //fcn1
+
+        /* @var $section Section */
+        foreach ($sections as $section)
+        {
+            $this->doShit($this->getPairs((string) $section));
+        }
+
+        $this->binaryCodeOffsets[] = $this->generateChecksum($this->binaryCodeOffsets);
+        $this->binaryCodeOffsets[] = 'STOP';
+        $this->binaryCodeOffsets[] = 'TERMINATE';
+
+        $map = $this->binaryCodesMap;
+        return join('', array_map(function($n) use ($map) {return $map[$n];}, $this->binaryCodeOffsets));
+    }
+
     public function __construct()
     {
         $this->slicer = new SectionSlicer();
@@ -33,6 +62,18 @@ class Gs1_128
         }
     }
 
+    private function setProperSubset($letter, $pair)
+    {
+        if (array_search((string) $pair, $this->{'map'.$letter}, true))
+        {
+            $this->mapInUse = $letter;
+            $this->binaryCodeOffsets[] = $this->turbo[$letter];
+            return true;
+        }
+
+        return false;
+    }
+
     private function checkSubsetMap($pair)
     {
         if (array_search((string) $pair, $this->getCodeMap(), true))
@@ -41,36 +82,20 @@ class Gs1_128
         }
 
         //if barcode contains small letters try to use B up front
-        //fixme: small duplication here
         if (preg_match('#[a-z]+#', $this->barcodeString))
         {
-            if (array_search((string) $pair, $this->mapB, true))
+            if ($this->setProperSubset('B', $pair))
             {
-                $this->mapInUse = 'B';
-                $this->binaryCodeOffsets[] = 100; //shift map to B
                 return;
             }
         }
 
-        if (array_search((string) $pair, $this->mapA, true))
+        foreach (['A', 'B', 'C'] as $letter)
         {
-            $this->mapInUse = 'A';
-            $this->binaryCodeOffsets[] = 101; //shift map to A
-            return;
-        }
-
-        if (array_search((string) $pair, $this->mapB, true))
-        {
-            $this->mapInUse = 'B';
-            $this->binaryCodeOffsets[] = 100; //shift map to B
-            return;
-        }
-
-        if (array_search((string) $pair, $this->mapC, true))
-        {
-            $this->mapInUse = 'C';
-            $this->binaryCodeOffsets[] = 99; //shift map to C
-            return;
+            if ($this->setProperSubset($letter, $pair))
+            {
+                return;
+            }
         }
     }
 
@@ -94,28 +119,6 @@ class Gs1_128
             $key = array_search($pair, $this->getCodeMap(), true);
             $key === false ? $this->doShit(str_split($pair)) : $this->binaryCodeOffsets[] = $key;
         }
-    }
-
-    public function generate($barcodeString)
-    {
-        $this->barcodeString = $barcodeString;
-        $sections = $this->slicer->getSections($barcodeString);
-        $this->binaryCodeOffsets = [];
-        $this->binaryCodeOffsets[] = 105; //start
-        $this->binaryCodeOffsets[] = 102; //fcn1
-
-        /* @var $section Section */
-        foreach ($sections as $section)
-        {
-            $this->doShit($this->getPairs((string) $section));
-        }
-
-        $this->binaryCodeOffsets[] = $this->generateChecksum($this->binaryCodeOffsets);
-        $this->binaryCodeOffsets[] = 'STOP';
-        $this->binaryCodeOffsets[] = 'TERMINATE';
-
-        $map = $this->binaryCodesMap;
-        return join('', array_map(function($n) use ($map) {return $map[$n];}, $this->binaryCodeOffsets));
     }
 
     private function getPairs($code)

@@ -48,6 +48,9 @@ class SectionBuilder
         '10' => [1, 20, 'BATCH NUMBER (10) - must contains between 1-20 digits'],
         '010' => [1, 20, 'BATCH NUMBER (10) - must contains between 1-20 digits'],
 
-        '12' => [6, 6, 'PAYMENT DATE (12) - must be in YYMMDD format']
+        '12' => [6, 6, 'PAYMENT DATE (12) - must be in YYMMDD format'],
+
+        '400' => [1, 30, 'CUSTOMER PURCHASE ORDER NUMBER (400) - must contains between 1-30 digits'],
+        //'400' => [1, 30, 'CUSTOMER PURCHASE ORDER NUMBER (400) - must contains between 1-30 digits']
     ];
 }

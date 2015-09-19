@@ -33,10 +33,42 @@ class Gs1_128
 
     private function checkSubsetMap($pair)
     {
-        if (array_search((string) $pair, $this->getCodeMap(), true) === false)
+        if (array_search((string) $pair, $this->getCodeMap(), true))
+        {
+            return; //current will match
+        }
+
+        //if barcode contains small letters try to use B up front
+        //fixme: small duplication here
+        if (preg_match('#[a-z]+#', $this->barcodeString))
+        {
+            if (array_search((string) $pair, $this->mapB, true))
+            {
+                $this->mapInUse = 'B';
+                $this->binaryCodeOffsets[] = 100; //shift map to B
+                return;
+            }
+        }
+
+        if (array_search((string) $pair, $this->mapA, true))
         {
             $this->mapInUse = 'A';
-            $this->binaryCodeOffsets[] = 101; //shif map to A
+            $this->binaryCodeOffsets[] = 101; //shift map to A
+            return;
+        }
+
+        if (array_search((string) $pair, $this->mapB, true))
+        {
+            $this->mapInUse = 'B';
+            $this->binaryCodeOffsets[] = 100; //shift map to B
+            return;
+        }
+
+        if (array_search((string) $pair, $this->mapC, true))
+        {
+            $this->mapInUse = 'C';
+            $this->binaryCodeOffsets[] = 99; //shift map to C
+            return;
         }
     }
 
@@ -52,8 +84,26 @@ class Gs1_128
         return $total % 103;
     }
 
+    private function doShit($array)
+    {
+        foreach ($array as $pair)
+        {
+            $this->checkSubsetMap($pair);
+            $x = array_search($pair, $this->getCodeMap(), true);
+            if ($x)
+            {
+                $this->binaryCodeOffsets[] = $x;
+            }
+            else
+            {
+                $this->doShit(str_split($pair));
+            }
+        }
+    }
+
     public function generate($barcodeString)
     {
+        $this->barcodeString = $barcodeString;
         $sections = $this->slicer->getSections($barcodeString);
         $this->binaryCodeOffsets = [];
         $this->binaryCodeOffsets[] = 105; //fixme: may use diffent subset (105 is for C
@@ -63,11 +113,7 @@ class Gs1_128
         /* @var $section Section */
         foreach ($sections as $section)
         {
-            foreach ($this->getPairs((string) $section) as $pair)
-            {
-                $this->checkSubsetMap($pair);
-                $this->binaryCodeOffsets[] = array_search($pair, $this->getCodeMap(), true);
-            }
+            $this->doShit($this->getPairs((string) $section));
         }
 
 
@@ -88,7 +134,7 @@ class Gs1_128
 
 
 
-    private function getBinary($offset)
+    private function getBinary($offset) //fixme: delete
     {
         //check if exists
         $code128c_codes = $this->binaryCodesMap;
@@ -103,9 +149,25 @@ class Gs1_128
     }
 
 
+    private $mapB = [
+        ' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', // 9 (end)
+        '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', // 19
+        '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', // 29
+        '>', '?', '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G', // 39
+        'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', // 49
+        'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '[', // 59
+        '\\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', // 69
+        'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', // 79
+        'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', // 89
+        'z', '{', '|', '}', '~', "\x7F", // 95
 
+        // Now for system codes
+        'FNC_3', 'FNC_2', 'SHIFT_A', 'CODE_C', 'FNC_4', // 100
+        'CODE_A', 'FNC_1', 'START_A', 'START_B', 'START_C', // 105
+        'STOP',	// 106
+    ];
 
-    private $mapA = array(
+    private $mapA = [
         ' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', // 9 (end)
         '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', // 19
         '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', // 29
@@ -126,7 +188,7 @@ class Gs1_128
         'FNC_3', 'FNC_2', 'SHIFT_B', 'CODE_C', 'CODE_B', // 100
         'FNC_4', 'FNC_1', 'START_A', 'START_B', 'START_C', // 105
         'STOP',	// 106
-    );
+    ];
 
     private $binaryCodesMap = [
         "00" => "11011001100",
@@ -239,20 +301,25 @@ class Gs1_128
         "FNC1" => "11110101110",
         "STOP" => "11000111010",
         "TERMINATE" => "11",
-        "START_DATA" => "105",
-        "FNC1_DATA" => "102" //wtf
+//        "START_DATA" => "105",
+//        "FNC1_DATA" => "102" //wtf
     ];
 
     private function getCodeMap()
     {
-        if ($this->mapInUse === 'C')
-        {
-            return $this->mapC;
-        }
-
         if ($this->mapInUse === 'A')
         {
             return $this->mapA;
+        }
+
+        if ($this->mapInUse === 'B')
+        {
+            return $this->mapB;
+        }
+
+        if ($this->mapInUse === 'C')
+        {
+            return $this->mapC;
         }
     }
 }

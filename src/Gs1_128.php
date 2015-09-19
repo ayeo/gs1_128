@@ -40,14 +40,12 @@ class Gs1_128
 
     public function generate($barcodeString)
     {
-        //$this->barcodeString = $barcodeString;
-        $sections = $this->slicer->getSections($barcodeString);
         $this->binaryCodeOffsets = [];
         $this->binaryCodeOffsets[] = 105; //start
         $this->binaryCodeOffsets[] = 102; //fcn1
 
         /* @var $section Section */
-        foreach ($sections as $section) {
+        foreach ($this->slicer->getSections($barcodeString) as $section) {
             $this->doShit($this->getPairs((string) $section), $barcodeString);
         }
 

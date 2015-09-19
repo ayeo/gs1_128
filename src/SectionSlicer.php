@@ -1,16 +1,12 @@
 <?php
 namespace Ayeo\Barcode;
 
-use Ayeo\Barcode\Model\Section;
-
 class SectionSlicer
 {
     /**
      * @var SectionBuilder
      */
     private $sectionBuilder;
-
-    private $klops;
 
     public function __construct()
     {
@@ -19,8 +15,6 @@ class SectionSlicer
 
     public function getSections($data)
     {
-        $this->klops = [];
-
         $pattern = '#\((\d+)\)((?:[^\(])+)#';
         preg_match_all($pattern, $data, $matches);
 

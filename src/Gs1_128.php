@@ -1,12 +1,11 @@
 <?php
 namespace Ayeo\Barcode;
 
-// Class using only Subset C to encode data - no jak chuj
+use Ayeo\Barcode\Model\Section;
+
 // https://pl.wikipedia.org/wiki/Kod_128
 // gs1-128 requires additional FNC1 chars (the only difference)
 // http://www.logisticlabel.com/pl/1/o_gs1.html
-use Ayeo\Barcode\Model\Section;
-
 class Gs1_128
 {
     /**
@@ -22,7 +21,7 @@ class Gs1_128
 
     private $barcodeString;
 
-    private $turbo = [
+    private $subsets = [
         'A' => 101,
         'B' => 100,
         'C' =>  99,
@@ -67,7 +66,7 @@ class Gs1_128
         if (array_search((string) $pair, $this->{'map'.$letter}, true))
         {
             $this->mapInUse = $letter;
-            $this->binaryCodeOffsets[] = $this->turbo[$letter];
+            $this->binaryCodeOffsets[] = $this->subsets[$letter];
             return true;
         }
 

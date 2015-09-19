@@ -35,10 +35,7 @@ class SectionBuilder
             $fixedLength = false;
         }
 
-        //todo: fix length to be even
-
         return new Section($identifier, $value, $fixedLength);
-
     }
 
     private $data = [
@@ -51,6 +48,5 @@ class SectionBuilder
         '12' => [6, 6, 'PAYMENT DATE (12) - must be in YYMMDD format'],
 
         '400' => [1, 30, 'CUSTOMER PURCHASE ORDER NUMBER (400) - must contains between 1-30 digits'],
-        //'400' => [1, 30, 'CUSTOMER PURCHASE ORDER NUMBER (400) - must contains between 1-30 digits']
     ];
 }

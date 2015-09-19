@@ -91,15 +91,8 @@ class Gs1_128
         foreach ($array as $pair)
         {
             $this->checkSubsetMap($pair);
-            $x = array_search($pair, $this->getCodeMap(), true);
-            if ($x)
-            {
-                $this->binaryCodeOffsets[] = $x;
-            }
-            else
-            {
-                $this->doShit(str_split($pair));
-            }
+            $key = array_search($pair, $this->getCodeMap(), true);
+            $key === false ? $this->doShit(str_split($pair)) : $this->binaryCodeOffsets[] = $key;
         }
     }
 
@@ -108,18 +101,14 @@ class Gs1_128
         $this->barcodeString = $barcodeString;
         $sections = $this->slicer->getSections($barcodeString);
         $this->binaryCodeOffsets = [];
-        $this->binaryCodeOffsets[] = 105; //fixme: may use diffent subset (105 is for C
+        $this->binaryCodeOffsets[] = 105; //start
         $this->binaryCodeOffsets[] = 102; //fcn1
-
 
         /* @var $section Section */
         foreach ($sections as $section)
         {
             $this->doShit($this->getPairs((string) $section));
         }
-
-
-
 
         $this->binaryCodeOffsets[] = $this->generateChecksum($this->binaryCodeOffsets);
         $this->binaryCodeOffsets[] = 'STOP';

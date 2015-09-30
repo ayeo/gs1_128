@@ -7,16 +7,32 @@ use Ayeo\Barcode\Utils\ScaleCalculator;
 
 class Printer
 {
+    /**
+     * Barcode width in pixels
+     *
+     * @var int
+     */
     private $width;
 
+    /**
+     * Barcode height in pixels
+     *
+     * @var int
+     */
     private $height;
 
-    private $scaleCalculator;
-
+    /**
+     * Font size in pixels
+     *
+     * @var integer
+     */
     private $fontSize;
 
-    private $barHeight;
-
+    /**
+     * Path to ttf file
+     *
+     * @var string
+     */
     private $fontPath;
 
     /**
@@ -29,6 +45,9 @@ class Printer
      */
     private $printColor;
 
+    /**
+     * @var Gs1_128
+     */
     private $barsGenerator;
 
     /**
@@ -36,15 +55,37 @@ class Printer
      */
     private $imageHandler;
 
+    /**
+     * @var integer
+     */
     private $allocatedBackgroundColor;
 
+    /**
+     * @var integer
+     */
     private $allocatedPrintColor;
 
     /**
+     * Scale is calculated based on image width and code langth
+     *
      * @var integer 1-5
      */
     private $scale;
 
+    /**
+     * Bar height depends on image height and text font size
+     *
+     * @var integer
+     */
+    private $barHeight;
+
+    private $scaleCalculator;
+
+    /**
+     * @param integer $width
+     * @param integer $height
+     * @param null|string $fontPath
+     */
     public function __construct($width, $height, $fontPath = null)
     {
         $this->width = $width;
@@ -59,8 +100,31 @@ class Printer
         $this->setPrintColor(new Rgb(0, 0, 0));
     }
 
+    /**
+     * @param $textToEncode
+     * @return resource
+     */
+    public function getResource($textToEncode)
+    {
+        $this->imageHandler = imagecreate($this->width, $this->height);
+        $this->allocatedBackgroundColor = $this->initColor($this->backgroundColor);
+        $this->allocatedPrintColor = $this->initColor($this->printColor);
+
+        $barcode = $this->barsGenerator->generate($textToEncode);
+        $this->scale = $this->scaleCalculator->getBarWidth($this->width, $barcode);
+
+        $this->printBars($barcode);
+        $this->printText($textToEncode);
+
+        return $this->imageHandler;
+    }
+
+    /**
+     * @param integer $fontSize
+     */
     public function setFontSize($fontSize)
     {
+        //todo: must be greater than 0
         $this->fontSize = $fontSize;
         $this->barHeight = $this->height - $this->fontSize - 10;
 
@@ -68,24 +132,29 @@ class Printer
         {
             throw new \RuntimeException('Image is to short');
         }
-
-        return $this;
     }
 
+    /**
+     * @param Rgb $color
+     */
     public function setBackgroundColor(Rgb $color)
     {
         $this->backgroundColor = $color;
-
-        return $this;
     }
 
+    /**
+     * @param Rgb $color
+     */
     public function setPrintColor(Rgb $color)
     {
         $this->printColor = $color;
-
-        return $this;
     }
 
+    /**
+     *
+     * @param Rgb $color
+     * @return int color identifier
+     */
     private function initColor(Rgb $color)
     {
         $result = imagecolorallocate(
@@ -98,6 +167,9 @@ class Printer
         return $result;
     }
 
+    /**
+     * @param $barcode binary format: 001101011101
+     */
     private function printBars($barcode)
     {
         $barcodeLength = strlen($barcode) * $this->scale;
@@ -121,6 +193,9 @@ class Printer
         }
     }
 
+    /**
+     * @param $text
+     */
     private function printText($text)
     {
         $xPosition = abs(($this->width / 2)) - strlen($text)* $this->fontSize / 2.68;
@@ -134,21 +209,6 @@ class Printer
             $this->fontPath,
             $text
         );
-    }
-
-    public function getResource($textToEncode)
-    {
-        $this->imageHandler = imagecreate($this->width, $this->height);
-        $this->allocatedBackgroundColor = $this->initColor($this->backgroundColor);
-        $this->allocatedPrintColor = $this->initColor($this->printColor);
-
-        $barcode = $this->barsGenerator->generate($textToEncode);
-        $this->scale = $this->scaleCalculator->getBarWidth($this->width, $barcode);
-
-        $this->printBars($barcode);
-        $this->printText($textToEncode);
-
-        return $this->imageHandler;
     }
 
 

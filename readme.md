@@ -16,7 +16,7 @@ $builder->output('(10)123456(400)11');
 ```
 This will generate png image using black and white and default font
 
-[barcode]: http://q.i-systems.pl/file/fa869375.png "Generated barcode"
+!(http://q.i-systems.pl/file/fa869375.png "Generated barcode")
 
  
 Custom barcode:

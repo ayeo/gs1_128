@@ -51,9 +51,17 @@ class Gs1_128
         $this->binaryCodeOffsets[] = 105; //start
         $this->binaryCodeOffsets[] = 102; //fcn1
 
+        $sections = $this->slicer->getSections($barcodeString);
+        $totalSectionsNumber = count($sections);
+        $i = 1;
+
         /* @var $section Section */
-        foreach ($this->slicer->getSections($barcodeString) as $section) {
+        foreach ($sections as $section) {
             $this->doShit($this->getPairs((string) $section), $barcodeString);
+
+            if ($i++ < $totalSectionsNumber && $section->hasFixedLength() === false) {
+                $this->binaryCodeOffsets[] = 102; //fcn1
+            }
         }
 
         $this->binaryCodeOffsets[] = $this->generateChecksum($this->binaryCodeOffsets);

@@ -5,6 +5,9 @@ use Ayeo\Barcode\Barcode\Gs1_128;
 use Ayeo\Barcode\Model\Rgb;
 use Ayeo\Barcode\Utils\ScaleCalculator;
 
+/**
+ * Class is responsible for generating barcode image
+ */
 class Printer
 {
     /**

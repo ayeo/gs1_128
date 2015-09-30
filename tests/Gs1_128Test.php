@@ -1,8 +1,9 @@
 <?php
 namespace Ayeo\Barcode\Test;
 
-use Ayeo\Barcode\Gs1_128;
+use Ayeo\Barcode\Barcode\Gs1_128;
 
+//test data generated using: http://example.barcodephp.com/html/BCGgs1128.php
 class Gs1_128Test extends \PHPUnit_Framework_TestCase
 {
     /**

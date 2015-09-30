@@ -1,9 +1,11 @@
 <?php
-namespace Ayeo\Barcode;
+namespace Ayeo\Barcode\Barcode;
 
 use Ayeo\Barcode\Data\BinaryMap;
 use Ayeo\Barcode\Data\Subsets;
 use Ayeo\Barcode\Model\Section;
+use Ayeo\Barcode\SectionSlicer;
+use Ayeo\Barcode\Utils;
 
 // https://pl.wikipedia.org/wiki/Kod_128
 // gs1-128 requires additional FNC1 chars (the only difference)

@@ -16,11 +16,12 @@
       "homepage": "http://ayeo.pl"
     }
   ],
+  "minimum-stability": "dev",
   "require": {
     "php": ">=5.4.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "~4.0"
+    "phpunit/phpunit": "~4.8"
   },
   "autoload": {
     "psr-4": {

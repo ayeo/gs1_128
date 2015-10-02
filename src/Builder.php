@@ -119,7 +119,7 @@ class Builder
         $this->fontSize = $size;
     }
 
-    public function setImageFromat($format)
+    public function setImageFormat($format)
     {
         if (array_key_exists($format, $this->imagesFormats))
         {

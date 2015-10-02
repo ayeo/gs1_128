@@ -2,8 +2,7 @@ GS1 barcode generator
 =====================
 
 The library generates GS1 barcode. Currently supported formats: GS1 128. Code is under development so it may change 
-radically. If you found an issue just let me know. Library generates identical barcodes like: 
-http://example.barcodephp.com/html/BCGgs1128.php
+radically. If you found an issue just let me know. 
 
 Usage
 -----
@@ -25,7 +24,7 @@ Custom barcode:
 $builder = new Barcode\Builder();
 $builder->setBarcodeType('gs1-128');
 $builder->setFilename('barcode.png');
-$builder->setImageFromat('png'); //fixme: rename to setImageFormat()
+$builder->setImageFormat('png');
 $builder->setWidth(500);
 $builder->setHeight(150);
 $builder->setFontPath('FreeSans.ttf');
@@ -35,7 +34,8 @@ $builder->setPaintColor(0, 0, 0);
 $builder->output('(10)123456(400)11');
 ```
 
-Acctualy generate the dame barcode becouse all params all set to default values. This shows only available settings
+Acctualy generate the dame barcode becouse all params all set to default values. This shows only 
+available settings
 
 Fluent interface is welcome
 
@@ -57,7 +57,8 @@ Everyone is welcome, feel free to join
 Supported identifiers
 ---------------------
 
-The goal is to support all existing gs1 application identifiers but at the moment I hava added only thoses I needed. 
+The goal is to support all existing gs1 application identifiers but at the moment I have added 
+only those I needed. 
 Feel free to add or request some. Full list is [here](http://www.databar-barcode.info/application-identifiers)
 
 |Code       |Name                               |Min length |Max length |

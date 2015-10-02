@@ -10,7 +10,7 @@ class Builder
 
     private $height = 150;
 
-    private $fontPath = '/assets/FreeSans.ttf';
+    private $fontPath = 'FreeSans.ttf';
 
     private $fontSize = 10;
 
@@ -37,6 +37,11 @@ class Builder
      */
     private $backgroundColor;
 
+    /**
+     * @var integer
+     */
+    private $scale;
+
     public function __construct()
     {
         $this->paintColor = new Rgb(0, 0, 0);
@@ -55,11 +60,12 @@ class Builder
         $printer->setPrintColor($this->paintColor);
         $printer->setFontSize($this->fontSize);
 
+        if (is_null($this->scale) === false) {
+            $printer->imposeScale($this->scale);
+        }
 
         $response = new Png($printer);
         return $response->output($text, $this->filename);
-
-
     }
 
     public function setWidth($width)
@@ -129,6 +135,12 @@ class Builder
     {
         //check extension
         $this->filename = $filename;
+    }
+
+    public function imposeScale($scale)
+    {
+        //todo: must be between 1-5, integer
+        $this->scale = $scale;
     }
 
 

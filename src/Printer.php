@@ -69,7 +69,7 @@ class Printer
     private $allocatedPrintColor;
 
     /**
-     * Scale is calculated based on image width and code langth
+     * Scale is calculated based on image width and code length
      *
      * @var integer 1-5
      */
@@ -83,6 +83,8 @@ class Printer
     private $barHeight;
 
     private $scaleCalculator;
+
+    private $imposedScale;
 
     /**
      * @param integer $width
@@ -103,6 +105,11 @@ class Printer
         $this->setPrintColor(new Rgb(0, 0, 0));
     }
 
+    public function imposeScale($scale)
+    {
+        $this->imposedScale = $scale;
+    }
+
     /**
      * @param $textToEncode
      * @return resource
@@ -114,7 +121,16 @@ class Printer
         $this->allocatedPrintColor = $this->initColor($this->printColor);
 
         $barcode = $this->barsGenerator->generate($textToEncode);
-        $this->scale = $this->scaleCalculator->getBarWidth($this->width, $barcode);
+
+        if ($this->imposedScale)
+        {
+            $this->scale = $this->imposedScale;
+        }
+        else
+        {
+            $this->scale = $this->scaleCalculator->getBarWidth($this->width, $barcode);
+        }
+
 
         $this->printBars($barcode);
         $this->printText($textToEncode);
@@ -201,7 +217,10 @@ class Printer
      */
     private function printText($text)
     {
-        $xPosition = abs(($this->width / 2)) - strlen($text)* $this->fontSize / 2.68;
+        //2.68 for 10
+        //2.80 for 9
+        $x = __DIR__."/".$this->fontPath;
+        $xPosition = abs(($this->width / 2)) - strlen($text)* $this->fontSize / 2.8;
         imagettftext(
             $this->imageHandler,
             $this->fontSize,
@@ -209,7 +228,7 @@ class Printer
             $xPosition,
             $y = $this->barHeight + 10 + $this->fontSize - 5,
             $this->allocatedPrintColor,
-            $this->fontPath,
+            $x,
             $text
         );
     }

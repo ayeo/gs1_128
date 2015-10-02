@@ -38,6 +38,9 @@ class SectionBuilder
         '02' => [14, 14, 'ITEM TRADE ITEM NUMBER (02) - must contains excat 14 digits'],
         '10' => [1, 20, 'BATCH NUMBER (10) - must contains between 1-20 digits'],
         '12' => [6, 6, 'PAYMENT DATE (12) - must be in YYMMDD format'],
+        '15' => [6, 6, 'BEST BEFORE DATE (YYMMDD) - must bi in YYMMDD format'],
+        '37' => [1, 8, 'NUMBER OF UNITS CONTAINED (37) - must contains between 1-8 digits'],
+        '3301' => [6, 6, 'CONTAINER GROSS WEIGHT (KG) - must contains 6 chars'],
         '400' => [1, 30, 'CUSTOMER PURCHASE ORDER NUMBER (400) - must contains between 1-30 digits'],
     ];
 }

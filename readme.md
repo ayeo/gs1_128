@@ -25,7 +25,7 @@ Custom barcode:
 $builder = new Barcode\Builder();
 $builder->setBarcodeType('gs1-128');
 $builder->setFilename('barcode.png');
-$builder->setImageFromat('png');
+$builder->setImageFromat('png'); //fixme: rename to setImageFormat()
 $builder->setWidth(500);
 $builder->setHeight(150);
 $builder->setFontPath('FreeSans.ttf');
@@ -53,3 +53,21 @@ Contributing
 ------------
 
 Everyone is welcome, feel free to join
+
+Supported identifiers
+---------------------
+
+The goal is to support all existing gs1 application identifiers but at the moment I hava added only thoses I needed. 
+Feel free to add or request some. Full list is [here](http://www.databar-barcode.info/application-identifiers)
+
+|Code       |Name                               |Min length |Max length |
+|-----------|-----------------------------------|-----------|-----------|
+|00         |SERIAL SHIPPING CONTAINER CODE     |18         |18         |
+|01         |GLOBAL TRADE ITEM NUMBER           |14         |14         |
+|02         |ITEM TRADE ITEM NUMBER             |14         |14         |
+|10         |BATCH NUMBER                       |1          |20         |
+|12         |PAYMENT DATE  (YYMMDD)             |6          |6          |
+|15         |BEST BEFORE DATE (YYMMDD)          |6          |6          |
+|37         |NUMBER OF UNITS CONTAINED          |1          |8          |
+|3301       |CONTAINER GROSS WEIGHT (KG)        |6          |6          |        
+|400        |CUSTOMER PURCHASE ORDER NUMBER     |1          |30         |

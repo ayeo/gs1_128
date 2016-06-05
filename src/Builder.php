@@ -18,6 +18,8 @@ class Builder
 
     private $imageFormat = 'png';
 
+    private $saveFile = false;
+
     private $supportedBarcodeTypes = [
         'gs1-128' => '\\Ayeo\\Barcode\\Barcode\\Gs1_128'
     ];
@@ -65,7 +67,7 @@ class Builder
         }
 
         $response = new Png($printer);
-        return $response->output($text, $this->filename);
+        return $response->output($text, $this->filename, $this->saveFile);
     }
 
     public function setWidth($width)
@@ -143,5 +145,9 @@ class Builder
         $this->scale = $scale;
     }
 
+    public function saveImageFile ($saveFile)
+    {
+        $this->saveFile = $saveFile;
+    }
 
 }

@@ -71,15 +71,16 @@ class Builder
     public function output($text)
     {
         $printer = $this->getPrinter();
-
         $response = new Png($printer);
+        
         return $response->output($text, $this->filename);
     }
 
-    public function saveImage ($text) {
+    public function saveImage ($text)
+    {
         $printer = $this->getPrinter();
-
         $saveFile = new SaveToFile($printer);
+
         return $saveFile->output($text, $this->filename);
     }
 

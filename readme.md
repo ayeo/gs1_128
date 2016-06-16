@@ -32,7 +32,18 @@ $builder->setFontPath('FreeSans.ttf');
 $builder->setFontSize(15);
 $builder->setBackgroundColor(255, 255, 255);
 $builder->setPaintColor(0, 0, 0);
+```
+
+Finally, you can use the output method to stream the image directly to the web browser.
+
+```php
 $builder->output('(10)123456(400)11');
+```
+
+If you want to save the image file, you can use the saveImage method instead.
+
+```php
+$builder->saveImage('(10)123456(400)11');
 ```
 
 Acctualy generate the dame barcode becouse all params all set to default values. This shows only

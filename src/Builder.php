@@ -3,6 +3,7 @@ namespace Ayeo\Barcode;
 
 use Ayeo\Barcode\Model\Rgb;
 use Ayeo\Barcode\Response\Png;
+use Ayeo\Barcode\SaveFile\SaveToFile;
 
 class Builder
 {
@@ -17,8 +18,6 @@ class Builder
     private $filename = 'barcode.png';
 
     private $imageFormat = 'png';
-
-    private $saveFile = false;
 
     private $supportedBarcodeTypes = [
         'gs1-128' => '\\Ayeo\\Barcode\\Barcode\\Gs1_128'
@@ -74,7 +73,14 @@ class Builder
         $printer = $this->getPrinter();
 
         $response = new Png($printer);
-        return $response->output($text, $this->filename, $this->saveFile);
+        return $response->output($text, $this->filename);
+    }
+
+    public function saveImage ($text) {
+        $printer = $this->getPrinter();
+
+        $saveFile = new SaveToFile($printer);
+        return $saveFile->output($text, $this->filename);
     }
 
     public function setWidth($width)
@@ -150,11 +156,6 @@ class Builder
     {
         //todo: must be between 1-5, integer
         $this->scale = $scale;
-    }
-
-    public function saveImageFile ($saveFile)
-    {
-        $this->saveFile = $saveFile;
     }
 
 }

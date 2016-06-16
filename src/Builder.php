@@ -55,7 +55,7 @@ class Builder
         return new self;
     }
 
-    public function output($text)
+    protected function getPrinter ()
     {
         $printer = new Printer($this->width, $this->height, $this->fontPath);
         $printer->setBackgroundColor($this->backgroundColor);
@@ -65,6 +65,13 @@ class Builder
         if (is_null($this->scale) === false) {
             $printer->imposeScale($this->scale);
         }
+
+        return $printer;
+    }
+
+    public function output($text)
+    {
+        $printer = $this->getPrinter();
 
         $response = new Png($printer);
         return $response->output($text, $this->filename, $this->saveFile);

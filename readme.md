@@ -24,7 +24,6 @@ Custom barcode:
 $builder = new Barcode\Builder();
 $builder->setBarcodeType('gs1-128');
 $builder->setFilename('barcode.png');
-$builder->saveImageFile(false);
 $builder->setImageFormat('png');
 $builder->setWidth(500);
 $builder->setHeight(150);

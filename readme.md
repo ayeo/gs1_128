@@ -82,7 +82,7 @@ Feel free to add or request some. Full list is [here](http://www.databar-barcode
 |15         |BEST BEFORE DATE (YYMMDD)                   |6          |6          |
 |37         |NUMBER OF UNITS CONTAINED                   |1          |8          |
 |3301       |CONTAINER GROSS WEIGHT (KG)                 |6          |6          |
-|3902       |AMOUNT PAYABLE - SINGLE MONETARY AREA       |1          |15         |
+|390(n)     |AMOUNT PAYABLE - SINGLE MONETARY AREA       |1          |15         |
 |400        |CUSTOMER PURCHASE ORDER NUMBER              |1          |30         |
 |415        |GLOBAL LOCATION NUMBER OF THE INVOICE PARTY |13         |13         |
 |8020       |PAYMENT SLIP REFERENCE NUMBER               |1          |25         |

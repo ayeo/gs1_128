@@ -110,6 +110,35 @@ class Printer
         $this->imposedScale = $scale;
     }
 
+    public function getBase64($textToEncode)
+    {
+        $this->imageHandler = imagecreate($this->width, $this->height);
+        $this->allocatedBackgroundColor = $this->initColor($this->backgroundColor);
+        $this->allocatedPrintColor = $this->initColor($this->printColor);
+
+        $barcode = $this->barsGenerator->generate($textToEncode);
+
+        if ($this->imposedScale)
+        {
+            $this->scale = $this->imposedScale;
+        }
+        else
+        {
+            $this->scale = $this->scaleCalculator->getBarWidth($this->width, $barcode);
+        }
+
+
+        $this->printBars($barcode);
+        $this->printText($textToEncode);
+
+        ob_start ();
+        imagepng($this->imageHandler);
+        $content = ob_get_contents();
+        ob_end_clean ();
+
+        return base64_encode($content);
+    }
+
     /**
      * @param $textToEncode
      * @return resource

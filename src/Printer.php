@@ -91,7 +91,7 @@ class Printer
      * @param integer $height
      * @param null|string $fontPath
      */
-    public function __construct($width, $height, $fontPath = null)
+    public function __construct($width, $height, $fontPath = 'FreeSans.ttf')
     {
         $this->width = $width;
         $this->height = $height;
@@ -110,8 +110,9 @@ class Printer
         $this->imposedScale = $scale;
     }
 
-    public function getBase64($textToEncode)
+    private function prepare($textToEncode)
     {
+        $textToEncode = $str=preg_replace('/\s+/', '', $textToEncode);
         $this->imageHandler = imagecreate($this->width, $this->height);
         $this->allocatedBackgroundColor = $this->initColor($this->backgroundColor);
         $this->allocatedPrintColor = $this->initColor($this->printColor);
@@ -130,6 +131,11 @@ class Printer
 
         $this->printBars($barcode);
         $this->printText($textToEncode);
+    }
+
+    public function getBase64($textToEncode)
+    {
+        $this->prepare($textToEncode);
 
         ob_start ();
         imagepng($this->imageHandler);
@@ -145,25 +151,8 @@ class Printer
      */
     public function getResource($textToEncode)
     {
-        $this->imageHandler = imagecreate($this->width, $this->height);
-        $this->allocatedBackgroundColor = $this->initColor($this->backgroundColor);
-        $this->allocatedPrintColor = $this->initColor($this->printColor);
-
-        $barcode = $this->barsGenerator->generate($textToEncode);
-
-        if ($this->imposedScale)
-        {
-            $this->scale = $this->imposedScale;
-        }
-        else
-        {
-            $this->scale = $this->scaleCalculator->getBarWidth($this->width, $barcode);
-        }
-
-
-        $this->printBars($barcode);
-        $this->printText($textToEncode);
-
+        $this->prepare($textToEncode);
+        
         return $this->imageHandler;
     }
 

@@ -10,7 +10,7 @@ Usage
 The simplest example:
 
 ```php
-$builder = new Barcode\Builder();
+$builder = new Ayeo\Barcode\Builder();
 $builder->output('(10)123456(400)11');
 ```
 This will generate png image using black and white and default font
@@ -21,7 +21,7 @@ This will generate png image using black and white and default font
 Custom barcode:
 
 ```php
-$builder = new Barcode\Builder();
+$builder = new Ayeo\Barcode\Builder();
 $builder->setBarcodeType('gs1-128');
 $builder->setFilename('barcode.png');
 $builder->setImageFormat('png');
@@ -51,7 +51,7 @@ available settings
 Fluent interface is welcome
 
 ```php
-Barcode\Builder::build()->setWidth(600)->setBackgroundColor(100, 100, 100)->output('(10)123456(400)11');
+Ayeo\Barcode\Builder::build()->setWidth(600)->setBackgroundColor(100, 100, 100)->output('(10)123456(400)11');
 ```
 
 Additional info

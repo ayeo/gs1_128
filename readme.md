@@ -3,6 +3,13 @@ GS1 barcode generator
 
 The library generates GS1 barcode. Currently supported formats: GS1 128.
 
+Install
+-------
+
+```
+composer install ayeo/gs1_barcode:1.0.*
+```
+
 Usage
 -----
 

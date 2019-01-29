@@ -6,6 +6,8 @@ The library generates GS1 barcode. Currently supported formats: GS1 128.
 Install
 -------
 
+Note that library requires both GD and imagettftext extensions
+
 ```
 composer install ayeo/gs1_barcode:1.0.*
 ```

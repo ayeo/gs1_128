@@ -4,7 +4,6 @@ namespace Ayeo\Barcode\Barcode;
 use Ayeo\Barcode\Data\BinaryMap;
 use Ayeo\Barcode\Data\Subsets;
 use Ayeo\Barcode\Model\Section;
-use Ayeo\Barcode\SectionSlicer;
 use Ayeo\Barcode\Utils;
 
 // https://pl.wikipedia.org/wiki/Kod_128
@@ -13,7 +12,7 @@ use Ayeo\Barcode\Utils;
 class Gs1_128
 {
     /**
-     * @var SectionSlicer
+     * @var Utils\SectionSlicer
      */
     private $slicer;
 
@@ -151,7 +150,6 @@ class Gs1_128
         return str_split($code, 2);
     }
 
-
     /**
      * @return array
      */
@@ -164,7 +162,4 @@ class Gs1_128
     {
         return $this->subsetsMaps->get($letter);
     }
-
-
-
 }

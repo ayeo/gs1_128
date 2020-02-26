@@ -1,3 +1,10 @@
+# 1.0.2 - 2020.02.26
+
+### Fixes
+
+- Free Type extension checking fixed 
+
+
 # 1.0.1 - 2018.01.28
 
 ### New

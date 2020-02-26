@@ -4,6 +4,7 @@ namespace Ayeo\Barcode;
 use Ayeo\Barcode\Barcode\Gs1_128;
 use Ayeo\Barcode\Model\Rgb;
 use Ayeo\Barcode\Utils\ScaleCalculator;
+use RuntimeException;
 
 /**
  * Class is responsible for generating barcode image
@@ -110,6 +111,10 @@ class Printer
         $this->imposedScale = $scale;
     }
 
+    /**
+     * @param $textToEncode
+     * @throws RuntimeException
+     */
     private function prepare($textToEncode)
     {
         $textToEncode = $str=preg_replace('/\s+/', '', $textToEncode);
@@ -127,7 +132,6 @@ class Printer
         {
             $this->scale = $this->scaleCalculator->getBarWidth($this->width, $barcode);
         }
-
 
         $this->printBars($barcode);
         $this->printText($textToEncode);
@@ -167,7 +171,7 @@ class Printer
 
         if ($this->barHeight < 10)
         {
-            throw new \RuntimeException('Image is to short');
+            throw new RuntimeException('Image is to short');
         }
     }
 
@@ -205,7 +209,7 @@ class Printer
     }
 
     /**
-     * @param $barcode binary format: 001101011101
+     * @param $barcode string binary format: 001101011101
      */
     private function printBars($barcode)
     {
@@ -232,9 +236,14 @@ class Printer
 
     /**
      * @param $text
+     * @throws RuntimeException
      */
     private function printText($text)
     {
+        if (function_exists('imagettftext') === false) {
+            throw new RuntimeException('This method requires PHP with FreeType extension installed');
+        }
+
         //2.68 for 10
         //2.80 for 9
         $x = __DIR__."/".$this->fontPath;

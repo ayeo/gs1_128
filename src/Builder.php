@@ -76,6 +76,11 @@ class Builder
         return $response->output($text, $this->filename);
     }
 
+    public function getBase64($text)
+    {
+        return $this->getPrinter()->getBase64($text);
+    }
+
     public function saveImage($text)
     {
         $printer = $this->getPrinter();

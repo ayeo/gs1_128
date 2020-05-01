@@ -37,8 +37,10 @@ class SectionBuilder
         '01' => [14, 14, 'GLOBAL TRADE ITEM NUMBER (01) - must contains excat 14 digits'],
         '02' => [14, 14, 'ITEM TRADE ITEM NUMBER (02) - must contains excat 14 digits'],
         '10' => [1, 20, 'BATCH NUMBER (10) - must contains between 1-20 digits'],
+        '11' => [6, 6, 'PRODUCTION DATE (11) - must contains exact 6 digits'],
         '12' => [6, 6, 'PAYMENT DATE (12) - must be in YYMMDD format'],
-        '15' => [6, 6, 'BEST BEFORE DATE (YYMMDD) - must bi in YYMMDD format'],
+        '15' => [6, 6, 'BEST BEFORE DATE (YYMMDD) - must be in YYMMDD format'],
+        '21' => [1, 20, 'SERIAL NUMBER - must containx between 1-20 chars'],
         '37' => [1, 8, 'NUMBER OF UNITS CONTAINED (37) - must contains between 1-8 digits'],
         '240' => [1, 15, 'ADDITIONAL PRODUCT IDENTIFICATION ASSIGNED BY THE MANUFACTURER (240) - must contains between 1-15 digits'
         ],

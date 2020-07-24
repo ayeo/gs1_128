@@ -40,6 +40,7 @@ class SectionBuilder
         '11' => [6, 6, 'PRODUCTION DATE (11) - must contains exact 6 digits'],
         '12' => [6, 6, 'PAYMENT DATE (12) - must be in YYMMDD format'],
         '15' => [6, 6, 'BEST BEFORE DATE (YYMMDD) - must be in YYMMDD format'],
+        '17' => [6, 6, 'EXPIRATION DATE (YYMMDD) - must be in YYMMDD format'],
         '21' => [1, 20, 'SERIAL NUMBER - must containx between 1-20 chars'],
         '37' => [1, 8, 'NUMBER OF UNITS CONTAINED (37) - must contains between 1-8 digits'],
         '240' => [1, 15, 'ADDITIONAL PRODUCT IDENTIFICATION ASSIGNED BY THE MANUFACTURER (240) - must contains between 1-15 digits'

@@ -18,4 +18,17 @@ class SectionSlicerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(json_encode ($expected), json_encode($sections));
     }
+
+    public function testSlicingExpirationDate()
+    {
+        $slicer = new SectionSlicer();
+        $sections = $slicer->getSections('(01)5012345678900(17)211231');
+
+        $expected = [
+            new Section('01', '5012345678900'),
+            new Section('17', '211231')
+        ];
+
+        $this->assertEquals(json_encode ($expected), json_encode($sections));
+    }
 }

@@ -2,6 +2,7 @@
 namespace Ayeo\Barcode\Test;
 
 use Ayeo\Barcode\Barcode\Gs1_128;
+use Ayeo\Barcode\Builder;
 
 //test data generated using: http://example.barcodephp.com/html/BCGgs1128.php
 class Gs1_128Test extends \PHPUnit_Framework_TestCase
@@ -58,4 +59,23 @@ class Gs1_128Test extends \PHPUnit_Framework_TestCase
             ]
         ];
     }
+
+    public function testX()
+    {
+        $builder = new Builder();
+        $builder->setBarcodeType('gs1-128');
+        $builder->setFilename('/opt/project/barcode.png');
+        $builder->setImageFormat('png');
+        $builder->setWidth(550);
+        $builder->setHeight(400);
+        $builder->setFontSize(15);
+        $builder->setBackgroundColor(255, 255, 255);
+        $builder->setPaintColor(0, 0, 0);
+
+        $string = '(403)22';
+        $online   = '1101001110011110101110110000101000011000011011010111101110110011100101101000011110110000111101011';
+        $result = $this->getBuilder()->generate($string);
+        $this->assertEquals($online, $result);
+    }
+
 }

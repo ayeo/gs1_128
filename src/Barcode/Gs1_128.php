@@ -56,9 +56,12 @@ class Gs1_128
         $totalSectionsNumber = count($sections);
         $i = 1;
 
+        $x = [];
         /* @var $section Section */
         foreach ($sections as $section) {
-            $this->doShit($this->getPairs((string) $section), $barcodeString);
+            $cc = $this->getPairs((string)$section);
+            $x[] = $cc;
+            $this->doShit($cc, $barcodeString);
 
             if ($i++ < $totalSectionsNumber && $section->hasFixedLength() === false) {
                 $this->binaryCodeOffsets[] = 102; //fcn1
@@ -70,7 +73,11 @@ class Gs1_128
         $this->binaryCodeOffsets[] = 'TERMINATE';
 
         $map = $this->binaryMap;
-        return join('', array_map(function($n) use ($map) {return $map->get($n);}, $this->binaryCodeOffsets));
+        $join = join('', array_map(function ($n) use ($map) {
+            return $map->get($n);
+        }, $this->binaryCodeOffsets));
+
+        return $join;
     }
 
     /**
@@ -136,8 +143,13 @@ class Gs1_128
     {
         foreach ($array as $pair) {
             $this->checkSubsetMap($pair, $fullCode);
-            $key = array_search($pair, $this->getCurrentSubset(), true);
-            $key === false ? $this->doShit(str_split($pair), $fullCode) : $this->binaryCodeOffsets[] = $key;
+            $subset = $this->getCurrentSubset();
+            $key = array_search($pair, $subset, true);
+            if ($key) {
+                $this->binaryCodeOffsets[] = $key;
+            } else {
+                $this->doShit(str_split($pair), $fullCode);
+            }
         }
     }
 

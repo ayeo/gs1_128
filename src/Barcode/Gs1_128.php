@@ -30,9 +30,9 @@ class Gs1_128
 
     //fixme: move to Subset class
     private $subsets = [
-        'A' => 101,
-        'B' => 100,
         'C' =>  99,
+        'B' => 100,
+        'A' => 101,
     ];
 
     //fixme: get rid of it
@@ -97,13 +97,6 @@ class Gs1_128
     {
         if (array_search((string) $pair, $this->getCurrentSubset(), true)) {
             return;
-        }
-
-        //if barcode contains small letters try to use B up front
-        if (preg_match('#[a-z]+#', $fullCode)) {
-            if ($this->setProperSubset('B', $pair)) {
-                return;
-            }
         }
 
         foreach (array_keys($this->subsets) as $letter) {

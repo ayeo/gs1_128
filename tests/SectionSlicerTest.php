@@ -22,10 +22,10 @@ class SectionSlicerTest extends \PHPUnit_Framework_TestCase
     public function testSlicingExpirationDate()
     {
         $slicer = new SectionSlicer();
-        $sections = $slicer->getSections('(01)5012345678900(17)211231');
+        $sections = $slicer->getSections('(01)50123456789001(17)211231');
 
         $expected = [
-            new Section('01', '5012345678900'),
+            new Section('01', '50123456789001'),
             new Section('17', '211231')
         ];
 

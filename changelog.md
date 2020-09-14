@@ -1,3 +1,10 @@
+# 1.0.3 - 2020.09.14
+
+### Fixes
+
+- Selecting subset strategy fixed 
+
+
 # 1.0.2 - 2020.02.26
 
 ### Fixes

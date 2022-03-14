@@ -9,7 +9,7 @@ Install
 Note that library requires both GD and Free Type extensions installed
 
 ```
-composer install ayeo/gs1_barcode:1.0.3
+composer require ayeo/gs1_barcode:1.0.3
 ```
 
 Usage

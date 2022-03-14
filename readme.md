@@ -57,6 +57,20 @@ If you want to save the image file, you can use the saveImage method instead.
 $builder->saveImage('(10)123456(400)11');
 ```
 
+If you want to disable force defined width image, use false on optional second parameter (default:true).
+If you resize image on print, label will be distorted.
+
+```php
+$builder->setWidth(500,false);
+```
+
+If you want to disable label to use your own or none.
+
+```php
+$builder->setBarcodeLabel(false);
+```
+
+
 Actually generate the same barcode because all params all set to default values. This shows only
 available settings
 

@@ -8,12 +8,13 @@ use Ayeo\Barcode\SaveFile\SaveToFile;
 class Builder
 {
     private $width = 500;
-
+    private $forceWidth = true;
     private $height = 150;
 
     private $fontPath = 'FreeSans.ttf';
-
     private $fontSize = 10;
+
+    private $barcodeLabel = true;
 
     private $filename = 'barcode.png';
 
@@ -56,7 +57,7 @@ class Builder
 
     protected function getPrinter ()
     {
-        $printer = new Printer($this->width, $this->height, $this->fontPath);
+        $printer = new Printer($this->width, $this->height, $this->forceWidth, $this->barcodeLabel, $this->fontPath);
         $printer->setBackgroundColor($this->backgroundColor);
         $printer->setPrintColor($this->paintColor);
         $printer->setFontSize($this->fontSize);
@@ -89,9 +90,10 @@ class Builder
         return $saveFile->output($text, $this->filename);
     }
 
-    public function setWidth($width)
+    public function setWidth($width, $forceWidth = true)
     {
         $this->width = $width;
+        $this->forceWidth = $forceWidth;
 
         return $this;
     }
@@ -113,6 +115,12 @@ class Builder
 
         throw new \LogicException('Unsupported barcode format');
     }
+
+    public function setBarcodeLabel($barcodeLabel)
+    {
+        $this->barcodeLabel = $barcodeLabel;
+    }
+    
 
     public function setBackgroundColor($r, $g, $b)
     {

@@ -87,16 +87,22 @@ class Printer
 
     private $imposedScale;
 
+    private $forceWidth;
+
+    private $barcodeLabel;
+
     /**
      * @param integer $width
      * @param integer $height
      * @param null|string $fontPath
      */
-    public function __construct($width, $height, $fontPath = 'FreeSans.ttf')
+    public function __construct($width, $height, $forceWidth, $barcodeLabel, $fontPath = 'FreeSans.ttf')
     {
         $this->width = $width;
         $this->height = $height;
         $this->fontPath = $fontPath;
+        $this->forceWidth = $forceWidth;
+        $this->barcodeLabel = $barcodeLabel;
 
         $this->scaleCalculator = new ScaleCalculator();
         $this->barsGenerator = new Gs1_128();
@@ -118,10 +124,6 @@ class Printer
     private function prepare($textToEncode)
     {
         $textToEncode = $str=preg_replace('/\s+/', '', $textToEncode);
-        $this->imageHandler = imagecreate($this->width, $this->height);
-        $this->allocatedBackgroundColor = $this->initColor($this->backgroundColor);
-        $this->allocatedPrintColor = $this->initColor($this->printColor);
-
         $barcode = $this->barsGenerator->generate($textToEncode);
 
         if ($this->imposedScale)
@@ -132,9 +134,17 @@ class Printer
         {
             $this->scale = $this->scaleCalculator->getBarWidth($this->width, $barcode);
         }
+        
+        $this->width = ($this->forceWidth) ? $this->width : strlen($barcode) * $this->scale;
+
+        $this->imageHandler = imagecreate($this->width, $this->height);
+        $this->allocatedBackgroundColor = $this->initColor($this->backgroundColor);
+        $this->allocatedPrintColor = $this->initColor($this->printColor);
 
         $this->printBars($barcode);
-        $this->printText($textToEncode);
+
+        if($this->barcodeLabel)
+            $this->printText($textToEncode);
     }
 
     public function getBase64($textToEncode)
@@ -167,7 +177,7 @@ class Printer
     {
         //todo: must be greater than 0
         $this->fontSize = $fontSize;
-        $this->barHeight = $this->height - $this->fontSize - 10;
+        $this->barHeight = ($this->barcodeLabel) ? $this->height - $this->fontSize - 10 : $this->height;
 
         if ($this->barHeight < 10)
         {
@@ -248,6 +258,7 @@ class Printer
         //2.80 for 9
         $x = __DIR__."/".$this->fontPath;
         $xPosition = abs(($this->width / 2)) - strlen($text)* $this->fontSize / 2.8;
+
         imagettftext(
             $this->imageHandler,
             $this->fontSize,

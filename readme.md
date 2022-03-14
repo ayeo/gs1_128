@@ -57,7 +57,7 @@ If you want to save the image file, you can use the saveImage method instead.
 $builder->saveImage('(10)123456(400)11');
 ```
 
-Acctualy generate the dame barcode becouse all params all set to default values. This shows only
+Actually generate the same barcode because all params all set to default values. This shows only
 available settings
 
 Fluent interface is welcome

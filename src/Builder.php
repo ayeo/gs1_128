@@ -7,22 +7,30 @@ use Ayeo\Barcode\SaveFile\SaveToFile;
 
 class Builder
 {
+    /** @var int */
     private $width = 500;
 
+    /** @var int */
     private $height = 150;
 
+    /** @var string */
     private $fontPath = 'FreeSans.ttf';
 
+    /** @var int */
     private $fontSize = 10;
 
+    /** @var string */
     private $filename = 'barcode.png';
 
+    /** @var string */
     private $imageFormat = 'png';
 
+    /** @var array */
     private $supportedBarcodeTypes = [
         'gs1-128' => '\\Ayeo\\Barcode\\Barcode\\Gs1_128'
     ];
 
+    /** @var array */
     private $imagesFormats = [
         'png' => '\\Ayeo\\Barcode\\Response\\Png',
         'jpeg' => '\\Ayeo\\Barcode\\Response\\Jpeg',
@@ -68,25 +76,40 @@ class Builder
         return $printer;
     }
 
-    public function output($text)
+    /**
+     * @param string $text
+     * @param bool $withLabel
+     * @return void
+     */
+    public function output($text, $withLabel = true)
     {
         $printer = $this->getPrinter();
         $response = new Png($printer);
         
-        return $response->output($text, $this->filename);
+        return $response->output($text, $this->filename, $withLabel);
     }
 
-    public function getBase64($text)
+    /**
+     * @param string $text
+     * @param bool $withLabel
+     * @return string
+     */
+    public function getBase64($text, $withLabel = true)
     {
-        return $this->getPrinter()->getBase64($text);
+        return $this->getPrinter()->getBase64($text, $withLabel);
     }
 
-    public function saveImage($text)
+    /**
+     * @param string $text
+     * @param bool $withLabel
+     * @return void
+     */
+    public function saveImage($text, $withLabel = true)
     {
         $printer = $this->getPrinter();
         $saveFile = new SaveToFile($printer);
 
-        return $saveFile->output($text, $this->filename);
+        return $saveFile->output($text, $this->filename, $withLabel);
     }
 
     public function setWidth($width)

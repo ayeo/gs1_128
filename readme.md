@@ -9,7 +9,7 @@ Install
 Note that library requires both GD and Free Type extensions installed
 
 ```
-composer require ayeo/gs1_barcode:1.0.3
+composer require ayeo/gs1_barcode:1.0.4
 ```
 
 Usage
@@ -57,6 +57,14 @@ If you want to save the image file, you can use the saveImage method instead.
 $builder->saveImage('(10)123456(400)11');
 ```
 
+Both output() and saveImage() methods has additional boolean parameters to determine if label should be included on 
+the print. Default value is true.
+
+```php
+$builder->output('(10)123456(400)11', $withLabel = false);
+$builder->saveImage('(10)123456(400)11', $withLabel = false);
+```
+
 Actually generate the same barcode because all params all set to default values. This shows only
 available settings
 
@@ -77,7 +85,12 @@ Additional info
 Contributing
 ------------
 
-Everyone is welcome, feel free to join
+Everyone is welcome, feel free to join. There is Dockerfile included for ease of developemnt. The image consist of
+php5.6 with GD and FreeType extensions. It also contains composer and xdebug. To build the image locally use
+
+```
+docker build -t php-gs1 .
+```
 
 Supported identifiers
 ---------------------

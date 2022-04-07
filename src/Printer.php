@@ -112,34 +112,41 @@ class Printer
     }
 
     /**
-     * @param $textToEncode
+     * @param string $textToEncode
+     * @param bool $withLabel
      * @throws RuntimeException
+     * @return void
      */
-    private function prepare($textToEncode)
+    private function prepare($textToEncode, $withLabel)
     {
-        $textToEncode = $str=preg_replace('/\s+/', '', $textToEncode);
+        $textToEncode = preg_replace('/\s+/', '', $textToEncode);
         $this->imageHandler = imagecreate($this->width, $this->height);
         $this->allocatedBackgroundColor = $this->initColor($this->backgroundColor);
         $this->allocatedPrintColor = $this->initColor($this->printColor);
-
+        $this->handleBarHeight($withLabel);
         $barcode = $this->barsGenerator->generate($textToEncode);
 
-        if ($this->imposedScale)
-        {
+        if ($this->imposedScale) {
             $this->scale = $this->imposedScale;
-        }
-        else
-        {
+        } else {
             $this->scale = $this->scaleCalculator->getBarWidth($this->width, $barcode);
         }
 
         $this->printBars($barcode);
-        $this->printText($textToEncode);
+
+        if ($withLabel) {
+            $this->printText($textToEncode);
+        }
     }
 
-    public function getBase64($textToEncode)
+    /**
+     * @param $textToEncode
+     * @param bool $wihtLabel
+     * @return string
+     */
+    public function getBase64($textToEncode, $withLabel = true)
     {
-        $this->prepare($textToEncode);
+        $this->prepare($textToEncode, $withLabel);
 
         ob_start ();
         imagepng($this->imageHandler);
@@ -151,12 +158,13 @@ class Printer
 
     /**
      * @param $textToEncode
+     * @param bool $wihtLabel
      * @return resource
      */
-    public function getResource($textToEncode)
+    public function getResource($textToEncode, $withLabel)
     {
-        $this->prepare($textToEncode);
-        
+        $this->prepare($textToEncode, $withLabel);
+
         return $this->imageHandler;
     }
 
@@ -167,12 +175,31 @@ class Printer
     {
         //todo: must be greater than 0
         $this->fontSize = $fontSize;
-        $this->barHeight = $this->height - $this->fontSize - 10;
+        $this->handleBarHeight(false);
+    }
 
-        if ($this->barHeight < 10)
-        {
-            throw new RuntimeException('Image is to short');
+    public function getBarHeight()
+    {
+        return $this->barHeight;
+    }
+
+    public function getFontSize()
+    {
+        return $this->fontSize;
+    }
+
+    private function handleBarHeight($withLabel)
+    {
+        $barHeight = $this->height - 10;
+        if ($withLabel) {
+            $barHeight -= $this->fontSize;
         }
+
+        if ($barHeight < 10) {
+            throw new RuntimeException('Image is too short');
+        }
+
+        $this->barHeight = $barHeight;
     }
 
     /**
@@ -259,6 +286,4 @@ class Printer
             $text
         );
     }
-
-
 }

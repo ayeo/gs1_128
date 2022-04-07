@@ -1,3 +1,10 @@
+# 1.0.4 - 2022.04.07
+
+### New
+
+- Functionality of disabling label added
+
+
 # 1.0.3 - 2020.09.14
 
 ### Fixes
@@ -27,9 +34,9 @@
 ### Improvements
 
 - System requirements added to composer (gd/imagettftext)
-- Compoer install info added to readme	
+- Composer install info added to readme	
 
 
 # 1.0.0 - 2015.10.02
 
-Initial versrion
+Initial version

@@ -85,8 +85,8 @@ class Builder
     {
         $printer = $this->getPrinter();
         $response = new Png($printer);
-        
-        return $response->output($text, $this->filename, $withLabel);
+
+        $response->output($text, $this->filename, $withLabel);
     }
 
     /**

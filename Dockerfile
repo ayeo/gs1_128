@@ -1,5 +1,7 @@
 FROM php:5.6-fpm-stretch
 
+RUN echo "deb http://archive.debian.org/debian stretch main" > /etc/apt/sources.list
+
 RUN apt-get update
 RUN apt-get install -qq -y libgd-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev
 RUN apt-get install -qq -y git
